@@ -45,6 +45,7 @@ float calc_icm_single(int players, float* player, int prizes, float* prize) {
   }
   else
     return prize[0];
+  //
 }
 
 float* calc_icm(int players, float* player, int prizes, float* prize) {

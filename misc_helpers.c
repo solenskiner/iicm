@@ -154,68 +154,6 @@ float* array_append_f(int num1, float* array1, int num2, float* array2) {
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-void array_array_cartesian_array2_cardmask_recurse(int x, int xi, int* y, StdDeck_CardMask** A, int* newx, StdDeck_CardMask* temp_inner, StdDeck_CardMask** B) {
-  if (xi < x) {
-    for (int i = 0; i < y[xi]; i++) {
-      temp_inner[xi] = A[xi][i];
-      array_array_cartesian_array2_cardmask_recurse(x, xi + 1, y, A, newx, temp_inner, B);
-    }
-  } else {
-    for (int i = 0; i < x; i++) {
-      B[*newx][i] = temp_inner[i];
-    }
-    (*newx)++;
-  }
-}
-
-StdDeck_CardMask** array_array_cartesian_array2_cardmask (StdDeck_CardMask** A, int x, int* y, int* newx) {
-  *newx = 1;
-  for (int i = 0; i < x; i++)
-    *newx *= y[i];
-  StdDeck_CardMask** B = (StdDeck_CardMask**) malloc(sizeof(StdDeck_CardMask*) * *newx);
-  for (int i = 0 ; i < *newx; i++) {
-     B[i] = (StdDeck_CardMask*) malloc(sizeof(StdDeck_CardMask) * x);
-  }
-
-  int xi = 0;
-  StdDeck_CardMask* tmp_prod = (StdDeck_CardMask*) malloc(sizeof(StdDeck_CardMask) * x);
-  array_array_cartesian_array2_cardmask_recurse(x, 0, y, A, &xi, tmp_prod, B);
-  free(tmp_prod);
-
-  return B;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////
-
-StdDeck_CardMask** array2_filter_array2_cardmask(StdDeck_CardMask** array, int x, int y, int* newx) {
-  StdDeck_CardMask temp;
-  int mark[x];
-  array_init_i(x, false, mark);
-  for (int i = 0; i < x; i++) {
-    StdDeck_CardMask_RESET(temp);
-    for (int j = 0; j < y; j++) {
-      StdDeck_CardMask_OR(temp, temp, array[i][j]);
-    }
-    if (StdDeck_numCards(temp) != 2*y) mark[x] = true;
-  }
-  *newx = x - array_sum_i(x, mark);
-  StdDeck_CardMask** results = (StdDeck_CardMask**) malloc(sizeof(StdDeck_CardMask*) * *newx);
-  for (int i = 0; i < x; i++) {
-    results[i] = (StdDeck_CardMask*) malloc(sizeof(StdDeck_CardMask) * y);
-  }
-  for(int i = 0, j = 0; i < x; i++) {
-    if (mark[i] == false) {
-      for (int k = 0; k < y; k++) {
-        results[j][k] = array[i][k];
-      }
-      j++;
-    }
-  }
-  return results;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////
-
 void array2_free_f(float ** arr, int x) {
   for (int i = 0; i < x; i++) {
     free(arr[i]);
@@ -228,17 +166,14 @@ void array2_free_i(int ** arr, int x) {
   }
   free(arr);
 }
-void array2_free_cardmask(StdDeck_CardMask ** arr, int x) {
-  for (int i = 0; i < x; i++) {
-    free(arr[i]);
+
+////////////////////////////////////////////////////////////////////////////////
+
+float* array_gather_f (int num, void* first, void* second, float fn(void*)) {
+  float* arr = (float*) malloc(num * sizeof(float));
+  unsigned int dist = (unsigned int)second - (unsigned int)first;
+  for (int i = 0; i < num; i++) {
+    arr[i] = fn((int)first + dist * i);
   }
-  free(arr);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////
-
-StdDeck_CardMask cardmask_OR(StdDeck_CardMask a, StdDeck_CardMask b) {
-  StdDeck_CardMask r;
-  StdDeck_CardMask_OR(r, a, b);
-  return r;
+  return arr;
 }

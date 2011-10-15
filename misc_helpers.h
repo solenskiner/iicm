@@ -21,7 +21,6 @@
 #ifndef MISC_HELPERS_H
 #define MISC_HELPERS_H
 
-#include <poker-eval/poker_defs.h>
 
 int max_i(int a, int b);
 int min_i(int a, int b);
@@ -49,15 +48,9 @@ float* array_slice_f(int start, int end, float* array);
 // destructive!
 float* array_append_f(int num1, float* array1, int num2, float* array2);
 
-void array_array_cartesian_array2_cardmask_recurse(int x, int xi, int* y, StdDeck_CardMask** A, int* newx, StdDeck_CardMask* temp_inner, StdDeck_CardMask** B);
-StdDeck_CardMask** array_array_cartesian_array2_cardmask (StdDeck_CardMask** A, int x, int* y, int* newx);
-
-StdDeck_CardMask** array2_filter_array2_cardmask(StdDeck_CardMask** array, int x, int y, int* newx);
-
 void array2_free_i(int ** arr, int x);
 void array2_free_f(float ** arr, int x);
-void array2_free_cardmask(StdDeck_CardMask ** arr, int x);
 
-StdDeck_CardMask cardmask_OR(StdDeck_CardMask a, StdDeck_CardMask b);
+float* array_gather_f (int num, void* first, void* second, float fn(void*));
 
 #endif // MISC_HELPERS_H
